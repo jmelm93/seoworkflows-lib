@@ -5,7 +5,7 @@ import pandas as pd
 import sys
 sys.path.insert(0, '..')
 
-from helpers import UrlCleaning
+from seoworkflows_lib import UrlCleaning
 
 # class NgramAnalysis:
 
