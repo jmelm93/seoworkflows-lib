@@ -40,11 +40,11 @@ for i in range(true_k):
     # Get top item for list
     for ind in order_centroids[i, :1]:
         top_value_in_cluster.append([f"Cluster {i}", terms[ind]])
-    # Get larger list printed for reference
-    print('Cluster %d:' % i),
+    # Get larger list 
+    # print('Cluster %d:' % i),
     for ind in order_centroids[i, :5]:
         clusters.append([f"Cluster {i}", terms[ind]])
-        print(f'{terms[ind]}')
+        # print(f'{terms[ind]}')
 
 from collections import defaultdict
 
@@ -55,28 +55,30 @@ for key, value in top_value_in_cluster:
     key, value = list(temp_dict.items())[0]
     new_dict[key].append(value)
 
-
-
-
-print('\n')
-print('Prediction')
+clusters_dict = defaultdict(list)
+for key, value in clusters:
+    temp_dict = {key: value}
+    key, value = list(temp_dict.items())[0]
+    clusters_dict[key].append(value)
+# print('\n')
+# print('Prediction')
 
 single_text = ['Nothing is easy in cricket. Maybe when you watch it on TV, it looks easy. But it is not. You have to use your brain and time the ball.']
 
 X = vectorizer.transform(single_text)
 predicted = model.predict(X)
 
-print(f'All predicted clusters: {predicted}')
 num = predicted[0]
 single_value = new_dict.get(f'Cluster {num}')
 related_cluster = predicted[0]
 
 data = {
-    'Cluster Num': related_cluster,
+    'Predicted Cluster': related_cluster,
     'Top Related Value': single_value,
     'Text Input': single_text,
-    'All Clusters': str(clusters),
+    'All Clusters': str(clusters_dict),
     }
 df = pd.DataFrame(data)
 
-print(df) 
+print(df)
+# df.to_csv('testing.csv', index=False) 
