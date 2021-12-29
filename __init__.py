@@ -120,65 +120,30 @@ class UrlCleaning:
         Takes a Url series and returns the path and directories (1 directory per column - duplicating the path).
     """
 
-    def __init__(self, url_series):
+    def __init__(self, url_series): # No timers on all below as conflicts with ngram timers
         self.url_series = url_series
     
     def get_url_path(self):
         from seoworkflows_lib.data_cleaning import get_url_path
-
-        task_name = 'get_url_path'
-        t.start(name=task_name)
-
         final = get_url_path(url_series=self.url_series)
-
-        t.stop(name=task_name, output_len=len(final))
-        
         return final
 
     def get_domain(self):
         from seoworkflows_lib.data_cleaning import get_domain
-
-        task_name = 'get_domain'
-        t.start(name=task_name)
-        
         final = get_domain(url_series=self.url_series)
-        
-        t.stop(name=task_name, output_len=len(final))
-
         return final
 
     def get_url_parts(self):
         from seoworkflows_lib.data_cleaning import get_url_parts
-
-        task_name = 'get_url_parts'
-        t.start(name=task_name)
-        
         final = get_url_parts(url_series=self.url_series)
-        
-        t.stop(name=task_name, output_len=len(final))
-
         return final
 
     def get_path_and_directories(self):
         from seoworkflows_lib.data_cleaning import get_path_and_directories
-
-        task_name = 'get_path_and_directories'
-        t.start(name=task_name)
-        
         final = get_path_and_directories(url_series=self.url_series)
-
-        t.stop(name=task_name, output_len=len(final))
-
         return final
 
     def get_all_directories_1_per_row(self):
         from seoworkflows_lib.data_cleaning import get_all_directories_1_per_row
-
-        task_name = 'get_all_directories_1_per_row'
-        t.start(name=task_name)
-
-        final = get_all_directories_1_per_row(url_series=self.url_series)
-
-        t.stop(name=task_name, output_len=len(final))
-        
+        final = get_all_directories_1_per_row(url_series=self.url_series)        
         return final
