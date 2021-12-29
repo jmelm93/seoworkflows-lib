@@ -6,10 +6,6 @@ sys.path.insert(0, '..')
 from seoworkflows_lib.logging.timers import Timer
 t = Timer()
 
-# import time
-# import logging
-# logging.basicConfig(level=logging.DEBUG ,datefmt='%d-%b-%y %H:%M:%S' , format='%(filename)s - %(asctime)s - %(levelname)s: [Message] - %(message)s')
-
 
 __version__ = '0.0.1'
 
