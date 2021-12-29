@@ -1,32 +1,19 @@
 import pandas as pd
 
+from dataclasses import dataclass
+
 import sys
 sys.path.insert(0, '..')
 
 from seoworkflows_lib.logging.timers import Timer
 t = Timer()
 
-
 __version__ = '0.0.1'
 
-def run_all_semrush_processes(data, brand_variants, search_volume_exclusions):
-    from seoworkflows_lib.data_cleaning import run_all_semrush_processes
-
-    task_name='Semrush Processes'
-    t.start(name=task_name)
-    
-    final = run_all_semrush_processes(data, brand_variants=brand_variants, search_volume_exclusions=search_volume_exclusions)
-
-    t.stop(name=task_name, output_len=len(final))
-    
-    return final
-
-
+@dataclass
 class CustomJoins:
-
-    def __init__(self, full_values, matching_criteria):
-        self.full_values = full_values
-        self.matching_criteria = matching_criteria
+    full_values: list
+    matching_criteria: list
 
     def partial_match_join_first_match_returned(self):
         from seoworkflows_lib.data_cleaning import partial_match_join_first_match_returned
@@ -55,11 +42,13 @@ class CustomJoins:
         return final
 
 
-
+@dataclass
 class NgramAnalysis:
+    input_list: list
+    ngram_type: str
+    characters: int
 
-    def url_ngrams(self, input_series, ngram_type, characters):
-        """
+    """
         The url_ngrams() function takes a series of URLs and select imputs and 
         returns ngrams and ngram frequencies in a dataframe.
 
@@ -76,70 +65,92 @@ class NgramAnalysis:
         -------
         A dataframe with 4 columns: 'ngram', 'frequency', 'type', 'ngram_cleaned' 
 
-        """
+    """
+
+    def url_ngrams(self):
+
         from seoworkflows_lib.data_cleaning import url_ngrams
 
         task_name = 'url_ngrams'
         t.start(name=task_name)
 
-        final = url_ngrams(input_series=input_series, ngram_type=ngram_type, characters=characters)
+        final = url_ngrams(input_list=self.input_list, ngram_type=self.ngram_type, characters=self.characters)
 
         t.stop(name=task_name, output_len=len(final))
 
         return final
 
-
+@dataclass
 class UrlCleaning:
+    url_list: list
+
     """
     A class for cleaning series objects of urls.
 
     Parameters
     ----------
-    url_series : series
+    url_list : list
         Urls for data cleaning.
 
     Methods
     -------
     get_url_path():
-        Takes a Url series and returns the input URLs + URL paths.
+        Takes a Url list and returns the input URLs + URL paths.
 
     get_domain():
-        Takes a Url series and returns the input URLs + domain
+        Takes a Url list and returns the input URLs + domain
 
     get_url_parts():
-        Takes a Url series and returns all URL parts (<scheme>://<netloc>/<path>;<params>?<query>).
+        Takes a Url list and returns all URL parts (<scheme>://<netloc>/<path>;<params>?<query>).
 
     get_path_and_directories():
-        Takes a Url series and returns the path and directories (directories are in single sell list).
+        Takes a Url list and returns the path and directories (directories are in single sell list).
 
     get_all_directories_1_per_row():
-        Takes a Url series and returns the path and directories (1 directory per column - duplicating the path).
+        Takes a Url list and returns the path and directories (1 directory per column - duplicating the path).
     """
-
-    def __init__(self, url_series): # No timers on all below as conflicts with ngram timers
-        self.url_series = url_series
     
     def get_url_path(self):
-        from seoworkflows_lib.data_cleaning import get_url_path
-        final = get_url_path(url_series=self.url_series)
+        from seoworkflows_lib.data_cleaning import get_url_path # No timers on all below as conflicts with ngram timers
+        final = get_url_path(url_list=self.url_list)
         return final
 
     def get_domain(self):
-        from seoworkflows_lib.data_cleaning import get_domain
-        final = get_domain(url_series=self.url_series)
+        from seoworkflows_lib.data_cleaning import get_domain # No timers on all below as conflicts with ngram timers
+        final = get_domain(url_list=self.url_list)
         return final
 
     def get_url_parts(self):
-        from seoworkflows_lib.data_cleaning import get_url_parts
-        final = get_url_parts(url_series=self.url_series)
+        from seoworkflows_lib.data_cleaning import get_url_parts # No timers on all below as conflicts with ngram timers
+        final = get_url_parts(url_list=self.url_list)
         return final
 
     def get_path_and_directories(self):
-        from seoworkflows_lib.data_cleaning import get_path_and_directories
-        final = get_path_and_directories(url_series=self.url_series)
+        from seoworkflows_lib.data_cleaning import get_path_and_directories # No timers on all below as conflicts with ngram timers
+        final = get_path_and_directories(url_list=self.url_list)
         return final
 
     def get_all_directories_1_per_row(self):
-        from seoworkflows_lib.data_cleaning import get_all_directories_1_per_row
-        final = get_all_directories_1_per_row(url_series=self.url_series)        
+        from seoworkflows_lib.data_cleaning import get_all_directories_1_per_row # No timers on all below as conflicts with ngram timers
+        final = get_all_directories_1_per_row(url_list=self.url_list)        
         return final
+
+
+
+def run_all_semrush_processes(data, brand_variants, search_volume_exclusions):
+    from seoworkflows_lib.data_cleaning import run_all_semrush_processes
+
+    task_name='Semrush Processes'
+    t.start(name=task_name)
+    
+    final = run_all_semrush_processes(data, brand_variants=brand_variants, search_volume_exclusions=search_volume_exclusions)
+
+    t.stop(name=task_name, output_len=len(final))
+    
+    return final
+
+
+
+def send_email(subject_line, content):
+    from seoworkflows_lib.send_email.sendgrid import send_email
+    send_email(subject_line=subject_line, content=content)

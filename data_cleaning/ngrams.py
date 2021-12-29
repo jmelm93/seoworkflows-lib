@@ -7,29 +7,27 @@ sys.path.insert(0, '..')
 
 from seoworkflows_lib import UrlCleaning
 
-# class NgramAnalysis:
 
-# def run_ngrams(self, characters, input_series):
-def run_ngrams(characters, input_series):
+def run_ngrams(characters, input_list):
     my_additional_stop_words = ['does', 'gets', 'like', 'got']
     characters = characters
     word_vectorizer = CountVectorizer(ngram_range=(characters, characters), analyzer='word',strip_accents = 'unicode' , stop_words=text.ENGLISH_STOP_WORDS.union(my_additional_stop_words))
-    sparse_matrix = word_vectorizer.fit_transform(input_series['stripped'])
+    sparse_matrix = word_vectorizer.fit_transform(input_list['stripped'])
     frequencies = sum(sparse_matrix).toarray()[0]
     df = pd.DataFrame(frequencies, index=word_vectorizer.get_feature_names(), columns=['frequency'])
     return df
 
-def url_ngrams(input_series, ngram_type, characters):
+def url_ngrams(input_list, ngram_type, characters):
     num_of_inputs_allowed = 1000
     try:
         ### Convert series to frame + extracts paths using `data_cleaning` module
         ### Strip URL paths to be singular words - `\.[^.]*$` at the end removes everything aftere the last '.' (e.g., '.html')
-        input_series = input_series.drop_duplicates()
-        df = input_series.to_frame('inputs')
-        df = UrlCleaning(url_series=df['inputs']).get_url_path()
+        input_list = input_list.drop_duplicates()
+        df = input_list.to_frame('inputs')
+        df = UrlCleaning(url_list=df['inputs']).get_url_path()
         df["stripped"] = df["paths"].str.replace('.*.com/|/|-|\.[^.]*$', ' ', regex=True)
 
-        all_ngrams = run_ngrams(characters=characters, input_series=df.head(num_of_inputs_allowed))
+        all_ngrams = run_ngrams(characters=characters, input_list=df.head(num_of_inputs_allowed))
         
         all_ngrams = (all_ngrams.reset_index()
                                 .sort_values(by=['frequency'], ascending=[False])
